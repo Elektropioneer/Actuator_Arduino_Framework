@@ -16,13 +16,13 @@ Servo s1; Servo s2; Servo s3; Servo s4; Servo s5;             // servo objects
 U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ SCL, /* data=*/ SDA, /* reset=*/ U8X8_PIN_NONE);   // OLEDs without Reset of the Display
 
 Servo _servo[5]                 = {s1, s2, s3, s4, s5};                                               // 6, 9, 10, 11, 3
-int _servo_begin[5]             = {0, 0, 0, 0, 0};       
+uint8_t _servo_current[5]       = {0, 0, 0, 0, 0};
 
 uint8_t _relay[3]               = {4, 5, A5};                                                         // D4, D5, A5
-uint8_t _relay_begin[3]         = {0, 0, 0};                                                          // starting values
+uint8_t _relay_current[3]       = {0, 0, 0};
 
 uint8_t _mosfet[3]              = {A0, A1, 12};                                                       // A6, A7, 12
-uint8_t _mosfet_begin[3]        = {0, 0, 0};                                                          // starting values
+uint8_t _mosfet_current[3]      = {0, 0, 0};
 
 uint8_t _adc_bat_move_pin       = A6;                                                                 // move battery pin
 float   _adc_bat_move_value     = 0;                                                                  // we store the value here
@@ -59,6 +59,7 @@ void setup() {
   u8x8.setFont(u8x8_font_chroma48medium8_r);
   
   setup_display();
+
 }
 
 void loop() {   }
@@ -67,24 +68,17 @@ void loop() {   }
 /********************************************************************************/
 /*                               Setup functions                                */
 /********************************************************************************/
-void setup_servo() {
-  s1.attach(6); s2.attach(9); s3.attach(10); s4.attach(11); s5.attach(3);   //attach to the pins
-  for(int i=0; i<5; i++) {
-    _servo[i].write(_servo_begin[i]);
-  }
-}
+void setup_servo() { s1.attach(6); s2.attach(9); s3.attach(10); s4.attach(11); s5.attach(3); }  //attach to the pins 
 
 void setup_relay() {
   for(int i=0; i<3; i++) {
    pinMode(_relay[i], OUTPUT); 
-   digitalWrite(_relay[i], _relay_begin[i]);
   }
 }
 
 void setup_mosfet() {
   for(int i=0; i<3; i++) {
    pinMode(_mosfet[i], OUTPUT); 
-   digitalWrite(_mosfet[i], _mosfet_begin[i]);
   }
 }
 
@@ -198,3 +192,34 @@ boolean check_adc_servo() {
 }
 
 /********************************************************************************/
+
+/*  num -> 1 - 3 | state -> 0, 1  */
+void relay(uint8_t num, uint8_t state) {
+  digitalWrite(_relay[num - 1], state);
+  _relay_current[num-1] = state;
+
+  #ifdef serial_print
+    Serial.println(); Serial.print("Relay num "); Serial.print(num); Serial.print(": "); Serial.print(_relay_current[num-1]); Serial.println();
+  #endif
+}
+
+/*  num -> 1 - 3 | state -> 0, 1  */
+void mosfet(uint8_t num, uint8_t state) {
+  digitalWrite(_mosfet[num - 1], state);
+  _mosfet_current[num-1] = state;
+
+  #ifdef serial_print
+    Serial.println(); Serial.print("Mosfet num "); Serial.print(num); Serial.print(": "); Serial.print(_mosfet_current[num-1]); Serial.println();
+  #endif
+}
+
+/*  num -> 1 - 5 | angle -> 0 - 180  */
+void servo(uint8_t num, uint8_t angle) {
+  _servo[num - 1].write(angle);
+  _servo_current[num-1] = angle;
+
+  #ifdef serial_print
+    Serial.println(); Serial.print("Servo num "); Serial.print(num); Serial.print(": "); Serial.print(_servo_current[num-1]); Serial.println();
+  #endif
+}
+
