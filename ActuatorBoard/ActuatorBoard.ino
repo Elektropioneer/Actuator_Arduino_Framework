@@ -4,6 +4,9 @@
 
 /*
  *  TODO
+ *  
+ *  AX-12 servo
+ *  
  *  Create UART communication
  *  Receive 8bit array
  *  Turn on/off things from that
@@ -12,7 +15,7 @@
 
 #define serial_print                                                                                  // uncomment if you want debug through serial
 
-Servo s1; Servo s2; Servo s3; Servo s4; Servo s5;             // servo objects
+Servo s1; Servo s2; Servo s3; Servo s4; Servo s5;                                                     // servo objects
 U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ SCL, /* data=*/ SDA, /* reset=*/ U8X8_PIN_NONE);   // OLEDs without Reset of the Display
 
 Servo _servo[5]                 = {s1, s2, s3, s4, s5};                                               // 6, 9, 10, 11, 3
@@ -62,7 +65,9 @@ void setup() {
 
 }
 
-void loop() {   }
+void loop() { 
+  // check the uart communication and decide on that  
+}
 
 
 /********************************************************************************/
@@ -223,3 +228,4 @@ void servo(uint8_t num, uint8_t angle) {
   #endif
 }
 
+/********************************************************************************/
