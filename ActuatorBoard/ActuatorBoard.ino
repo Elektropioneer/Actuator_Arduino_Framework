@@ -2,6 +2,14 @@
 #include <Arduino.h>
 #include <U8x8lib.h>
 
+/*
+ *  TODO
+ *  Create UART communication
+ *  Receive 8bit array
+ *  Turn on/off things from that
+ *  Create pcb fully
+ */
+
 #define serial_print                                                                                  // uncomment if you want debug through serial
 
 Servo s1; Servo s2; Servo s3; Servo s4; Servo s5;             // servo objects
@@ -25,7 +33,7 @@ float   _adc_bat_main_value     = 0;                                            
 float   _adc_bat_main_min       = 12.0;                                                               // minimum of the battery 
 
 uint8_t _adc_bat_servo_pin      = A2;                                                                 // pin for adc servo
-float   _adc_servo_min          = 4.85;                                                               // min value
+float   _adc_servo_min          = 4.9;                                                               // min value
 
 String error_0 = "X"; String error_1 = "X"; String error_2 = "X";                                     // error strings
 
@@ -41,10 +49,10 @@ void setup() {
   delay(500);
 
   // check ADCs
-  if(!check_adc_bat_move()) { Serial.print("ADC_BAT_MOVE - don't start...");  error_1="CHNG BAT MOVE";/*while(1);*/ }
-  if(!check_adc_bat_main()) { Serial.print("ADC_BAT_MAIN - don't start...");  error_2="CHNG BAT MAIN";/*while(1);*/ }
+  if(!check_adc_bat_move()) { /*Serial.print("ADC_BAT_MOVE - don't start...");*/  error_1="CHNG BAT MOVE";/*while(1);*/ }
+  if(!check_adc_bat_main()) { /*Serial.print("ADC_BAT_MAIN - don't start...");*/  error_2="CHNG BAT MAIN";/*while(1);*/ }
   
-  if(!check_adc_servo())    { Serial.print("ADC_SERVO - don't start...");     error_0="CHK VOLTAGE"; }
+  if(!check_adc_servo())    { /*Serial.print("ADC_SERVO - don't start...");*/     error_0="CHK VOLTAGE"; }
 
   // setup the display
   u8x8.begin(); 
@@ -178,7 +186,7 @@ boolean check_adc_bat_main() {
 /*
  *  int adc_bat_servo()         - reads the analog of the servo pin
  *  float adc_bat_servo_read()  - convert to 0-5V range
- *  boolean check_adc_servo()   - returns true if it is above 4.85
+ *  boolean check_adc_servo()   - returns true if it is above min value
  */
 int adc_bat_servo()                  { return analogRead(_adc_bat_servo_pin); } 
 float adc_bat_servo_read()           { return (adc_bat_servo() * (5.0 / 1023.0)); };
