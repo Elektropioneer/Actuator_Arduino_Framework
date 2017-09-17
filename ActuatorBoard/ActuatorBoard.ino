@@ -1,7 +1,6 @@
 #include <Servo.h>
 #include <Arduino.h>
 #include <U8x8lib.h>
-#include <stdio.h>
 
 #define serial_print                                                                                  // uncomment if you want debug through serial
 
@@ -25,7 +24,10 @@ uint8_t _adc_bat_main_pin       = A7;                                           
 float   _adc_bat_main_value     = 0;                                                                  // we store the value here
 float   _adc_bat_main_min       = 12.0;                                                               // minimum of the battery 
 
-String error_1 = "X"; String error_2 = "X";                                                           // error strings
+uint8_t _adc_bat_servo_pin      = A2;                                                                 // pin for adc servo
+float   _adc_servo_min          = 4.85;                                                               // min value
+
+String error_0 = "X"; String error_1 = "X"; String error_2 = "X";                                     // error strings
 
 void setup() {
   Serial.begin(9600);                                                                                 // setup serial
@@ -39,8 +41,10 @@ void setup() {
   delay(500);
 
   // check ADCs
-  if(!check_adc_bat_move()) { Serial.print("ADC_BAT_MOVE - don't start..."); error_1="CHNG BAT MOVE";/*while(1);*/ }
-  if(!check_adc_bat_main()) { Serial.print("ADC_BAT_MAIN - don't start..."); error_2="CHNG BAT MAIN";/*while(1);*/ }
+  if(!check_adc_bat_move()) { Serial.print("ADC_BAT_MOVE - don't start...");  error_1="CHNG BAT MOVE";/*while(1);*/ }
+  if(!check_adc_bat_main()) { Serial.print("ADC_BAT_MAIN - don't start...");  error_2="CHNG BAT MAIN";/*while(1);*/ }
+  
+  if(!check_adc_servo())    { Serial.print("ADC_SERVO - don't start...");     error_0="CHK VOLTAGE"; }
 
   // setup the display
   u8x8.begin(); 
@@ -79,11 +83,12 @@ void setup_mosfet() {
 void setup_display() {
   delay(100);
   
-  u8x8.drawString(0,1,"EP - 2k18"); 
-  u8x8.setCursor(0, 2); u8x8.print("Move Bat: "); u8x8.print(_adc_bat_move_real(), 2); 
-  u8x8.setCursor(0, 3); u8x8.print("Main Bat: "); u8x8.print(_adc_bat_main_real(), 2);
-  u8x8.setCursor(0,5); u8x8.print("E:"); u8x8.print(error_1);
-  u8x8.setCursor(0,6); u8x8.print("E:"); u8x8.print(error_2);
+  u8x8.setCursor(0, 1); u8x8.print("Move Bat: "); u8x8.print(_adc_bat_move_real(), 2); 
+  u8x8.setCursor(0, 2); u8x8.print("Main Bat: "); u8x8.print(_adc_bat_main_real(), 2);
+  u8x8.setCursor(0, 3); u8x8.print("Servo Rg: "); u8x8.print(adc_bat_servo_read(), 2);
+  u8x8.setCursor(0, 4); u8x8.print("E:"); u8x8.print(error_0);
+  u8x8.setCursor(0, 5); u8x8.print("  "); u8x8.print(error_1);
+  u8x8.setCursor(0, 6); u8x8.print("  "); u8x8.print(error_2);
 
 }
 /********************************************************************************/
@@ -166,6 +171,22 @@ boolean check_adc_bat_main() {
     
     return false;
   }
+}
+
+/********************************************************************************/
+
+/*
+ *  int adc_bat_servo()         - reads the analog of the servo pin
+ *  float adc_bat_servo_read()  - convert to 0-5V range
+ *  boolean check_adc_servo()   - returns true if it is above 4.85
+ */
+int adc_bat_servo()                  { return analogRead(_adc_bat_servo_pin); } 
+float adc_bat_servo_read()           { return (adc_bat_servo() * (5.0 / 1023.0)); };
+boolean check_adc_servo() { 
+  if(adc_bat_servo_read() > _adc_servo_min) 
+    return true;
+  else
+    return false;
 }
 
 /********************************************************************************/
