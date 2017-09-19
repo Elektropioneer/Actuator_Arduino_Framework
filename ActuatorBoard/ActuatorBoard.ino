@@ -15,6 +15,9 @@
 
 #define serial_print                                                                                  // uncomment if you want debug through serial
 
+float voltage_div_r1 = 100000.0;                                                                      // voltage divider r1
+float voltage_div_r2 = 50000.0;                                                                       // voltage divider r2
+
 Servo s1; Servo s2; Servo s3; Servo s4; Servo s5;                                                     // servo objects
 U8X8_SSD1306_128X64_NONAME_SW_I2C u8x8(/* clock=*/ SCL, /* data=*/ SDA, /* reset=*/ U8X8_PIN_NONE);   // OLEDs without Reset of the Display
 
@@ -114,7 +117,7 @@ void adc_bat_move_serial_voltage()  { Serial.println(); Serial.print("Battery mo
 
 float _adc_bat_move_real() {
   // Vs = (Vout * (R1+R2)) / R2
-  return ((get_adc_bat_move_value() * (100000 + 50000)) / 50000);
+  return ((get_adc_bat_move_value() * (voltage_div_r1 + voltage_div_r2)) / voltage_div_r2);
 }
 
 boolean check_adc_bat_move() { 
@@ -155,7 +158,7 @@ void adc_bat_main_serial_voltage()  { Serial.println(); Serial.print("Battery ma
 
 float _adc_bat_main_real() {
   // Vs = (Vout * (R1+R2)) / R2
-  return ((get_adc_bat_main_value() * (100000 + 50000)) / 50000);
+  return ((get_adc_bat_main_value() * (voltage_div_r1 + voltage_div_r2)) / voltage_div_r2);
 }
 
 boolean check_adc_bat_main() { 
