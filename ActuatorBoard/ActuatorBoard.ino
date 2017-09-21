@@ -79,7 +79,7 @@ void loop() {
       servo(received[1], received[2]);
     } else if(received[0] == 'M') {
       mosfet(received[1], received[2]);
-    }
+    } 
 }
 }
 
