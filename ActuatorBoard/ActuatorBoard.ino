@@ -75,6 +75,10 @@ void loop() {
     Serial.readBytesUntil('X', received, 3);
     if(received[0] == 'R') {
       relay(received[1], received[2]);
+    } else if(received[0] == 'S') {
+      servo(received[1], received[2]);
+    } else if(received[0] == 'M') {
+      mosfet(received[1], received[2]);
     }
 }
 }
