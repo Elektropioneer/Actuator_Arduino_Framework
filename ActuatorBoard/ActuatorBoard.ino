@@ -43,6 +43,8 @@ float   _adc_servo_min          = 4.9;                                          
 
 String error_0 = "X"; String error_1 = "X"; String error_2 = "X";                                     // error strings
 
+char received[3];
+
 void setup() {
   Serial.begin(9600);                                                                                 // setup serial
 
@@ -69,7 +71,12 @@ void setup() {
 }
 
 void loop() { 
-  // check the uart communication and decide on that  
+  if (Serial.available() > 0) {
+    Serial.readBytesUntil('X', received, 3);
+    if(received[0] == 'R') {
+      relay(received[1], received[2]);
+    }
+}
 }
 
 
