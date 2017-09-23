@@ -27,7 +27,7 @@ uint8_t _servo_current[5]       = {0, 0, 0, 0, 0};
 uint8_t _relay[3]               = {4, 5, A5};                                                         // D4, D5, A5
 uint8_t _relay_current[3]       = {0, 0, 0};
 
-uint8_t _mosfet[3]              = {A0, A1, 12};                                                       // A6, A7, 12
+uint8_t _mosfet[3]              = {A0, A1, 12};                                                       // A0, A1, 12
 uint8_t _mosfet_current[3]      = {0, 0, 0};
 
 uint8_t _adc_bat_move_pin       = A6;                                                                 // move battery pin
@@ -79,8 +79,18 @@ void loop() {
       servo(received[1], received[2]);
     } else if(received[0] == 'M') {
       mosfet(received[1], received[2]);
-    } 
-}
+    } else if(received[0] == 'G') {
+
+      uint8_t number;
+      
+      if(received[1] == 'M') {
+        number = _mosfet_current[received[2] - 1];
+      }
+          
+      
+      Serial.write(number);
+    }
+  }
 }
 
 
