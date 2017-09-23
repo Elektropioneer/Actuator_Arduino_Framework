@@ -93,7 +93,12 @@ void loop() {
           
       
       Serial.write(number);
+    } else if(received[0] == 'P') {
+      //ping
+      uint8_t num = 1;
+      Serial.write(num);
     }
+    
   }
 }
 
