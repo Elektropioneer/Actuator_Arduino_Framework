@@ -80,11 +80,15 @@ void loop() {
     } else if(received[0] == 'M') {
       mosfet(received[1], received[2]);
     } else if(received[0] == 'G') {
-
       uint8_t number;
-      
       if(received[1] == 'M') {
         number = _mosfet_current[received[2] - 1];
+      } else if(received[1] == 'R') {
+        number = _relay_current[received[2] - 1];
+      } else if(received[1] == 'S') {
+        number = _servo_current[received[2] - 1];
+      } else{
+        number = 0;
       }
           
       
